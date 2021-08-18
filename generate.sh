@@ -7,4 +7,4 @@ vendor/bin/generate-stubs \
     --classes \
     --interfaces \
     --traits \
-    --out=polylang-stubs.php
+    --out=xliff-exporter-stubs.php
