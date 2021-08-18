@@ -964,9 +964,9 @@ class PLL_Export_Bulk_Option extends \PLL_Bulk_Translate_Option
     /**
      * PLL_Export_Bulk_Option constructor.
      *
-     * @param PLL_Model                       $model Used to query languages and post translations.
-     * @param PLL_Export_File_Interface       $export A file writer class.
-     * @param PLL_Export_Downloader_Interface $downloader A file to handle downloading files.
+     * @param PLL_Model $model Used to query languages and post translations.
+     * @param PLL_Export_File|PLL_Export_Multi_Files $export A file writer class.
+     * @param PLL_Export_Download_Zip $downloader A file to handle downloading files.
      */
     public function __construct($model, $export, $downloader)
     {
