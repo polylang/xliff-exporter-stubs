@@ -302,6 +302,11 @@ class PLL_Translation_Walker_Classic extends \PLL_Translation_Walker_Base
  */
 class PLL_Translation_Post_Model extends \PLL_Sync_Post_Model
 {
+    /**
+     * The posts fields.
+     *
+     * @var array
+     */
     private $fields;
     /**
      * PLL_Translation_Post_Model constructor.
@@ -602,6 +607,80 @@ class PLL_Translation_Entry_Identified
      * @return int
      */
     public function get_id()
+    {
+    }
+}
+/**
+ * @package polylang-pro
+ */
+/**
+ * Translate post taxonomies from a set of translation entries.
+ */
+class PLL_Translation_Term
+{
+    /**
+     * Translations set where to look for the post metas translations.
+     *
+     * @var Translations|PLL_Translation_Translations_Interface
+     */
+    private $translations;
+    /**
+     * Used to manage languages and translations.
+     *
+     * @var PLL_Model
+     */
+    private $model;
+    /**
+     * PLL_Translation_Term constructor.
+     *
+     * @param PLL_Model $model PLL model.
+     */
+    public function __construct($model)
+    {
+    }
+    /**
+     * Setter for translations set
+     *
+     * @param  Translations|PLL_Translation_Translations_Interface $translations A set of translations to search the metas translations in.
+     */
+    public function set_translations($translations)
+    {
+    }
+    /**
+     * Translate a term.
+     *
+     * @param array        $entry Array of an entry properties.
+     * @param PLL_Language $language The target language.
+     * @return void
+     */
+    public function translate_term($entry, $language)
+    {
+    }
+    /**
+     * Get the translated term name if exists, the source name otherwise.
+     *
+     * @param WP_Term $source_term The source term object.
+     * @return string The translated name.
+     */
+    private function get_translated_term_name($source_term)
+    {
+    }
+    /**
+     * Get the translated term description if exists, the source description otherwise.
+     *
+     * @param WP_Term $source_term The source term object.
+     * @return string The translated description.
+     */
+    private function get_translated_term_description($source_term)
+    {
+    }
+    /**
+     * Translate a given entry, return the source string if no translation found.
+     *
+     * @param PLL_Translation_Entry_Identified $entry The entry to translate.
+     * @return string The translated string from the entry.
+     */
+    private function maybe_translate_term_entry($entry)
     {
     }
 }
@@ -964,9 +1043,9 @@ class PLL_Export_Bulk_Option extends \PLL_Bulk_Translate_Option
     /**
      * PLL_Export_Bulk_Option constructor.
      *
-     * @param PLL_Model $model Used to query languages and post translations.
+     * @param PLL_Model                              $model Used to query languages and post translations.
      * @param PLL_Export_File|PLL_Export_Multi_Files $export A file writer class.
-     * @param PLL_Export_Download_Zip $downloader A file to handle downloading files.
+     * @param PLL_Export_Download_Zip                $downloader A file to handle downloading files.
      */
     public function __construct($model, $export, $downloader)
     {
