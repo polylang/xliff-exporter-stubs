@@ -869,41 +869,105 @@ class PLL_Translation_Translations_Filtered implements \PLL_Translation_Translat
  * @package polylang-pro
  */
 /**
+ * @package polylang-pro
+ */
+
+/**
  * Class PLL_Translation_Post_Metas
  *
  * Translate post metas from a set of translation entries.
- *
- * @since 2.8
  */
-class PLL_Translation_Post_Metas extends \PLL_Sync_Post_Metas
-{
-    /**
-     * Translations set where to look for the post metas translations.
-     *
-     * @var Translations|PLL_Translation_Translations_Interface
-     */
-    private $translations;
-    /**
-     * Setter for translations set
-     *
-     * @param  Translations|PLL_Translation_Translations_Interface $translations A set of translations to search the metas translations in.
-     */
-    public function set_translations($translations)
-    {
-    }
-    /**
-     * Look for translation of a meta value.
-     *
-     * @param mixed  $value A value to translate. Can only be translated if it is an unserialized string.
-     * @param string $key Key of the meta to translate.
-     * @param int    $from Id of the source post to which this meta is related.
-     * @param int    $to Id of translation post to attach the meta translation to.
-     * @param string $lang Slug of the language in which the meta should be translated.
-     * @return mixed
-     */
-    public function maybe_translate_value($value, $key, $from, $to, $lang)
-    {
-    }
+class PLL_Translation_Post_Metas {
+
+	/**
+	 * Translations set where to look for the post metas translations.
+	 *
+	 * @var Translations|PLL_Translation_Translations_Interface
+	 */
+	private $translations;
+
+	/**
+	 * Meta key for attachment metadatas.
+	 *
+	 * @var string
+	 */
+	const ATTACHMENT_METADATA = '_wp_attachment_metadata';
+
+	/**
+	 * Meta key for the attached files.
+	 *
+	 * @var string
+	 */
+	const ATTACHED_FILE = '_wp_attached_file';
+
+	/**
+	 * Meta key for image alternative texts.
+	 *
+	 * @var string
+	 */
+	const ATTACHMENT_IMAGE_ALT = '_wp_attachment_image_alt';
+
+	/**
+	 * Metas that are untranslatable.
+	 *
+	 * @var array
+	 */
+	private $untranslatable_metas = array(
+		self::ATTACHMENT_METADATA,
+		self::ATTACHED_FILE,
+	);
+
+	/**
+	 * Metas that should remain unique.
+	 *
+	 * @var array
+	 */
+	private $unique_metas = array(
+		self::ATTACHMENT_METADATA,
+		self::ATTACHED_FILE,
+		self::ATTACHMENT_IMAGE_ALT,
+	);
+
+	/**
+	 * Initialize the class by creating the needed hooks.
+	 */
+	public function init()
+	{
+	}
+
+	/**
+	 * Setter for translations set
+	 *
+	 * @param  Translations|PLL_Translation_Translations_Interface $translations A set of translations to search the metas translations in.
+	 */
+	public function set_translations( $translations )
+	{
+	}
+
+	/**
+	 * Look for translation of a meta value.
+	 *
+	 * @param mixed  $value A value to translate. Can only be translated if it is an unserialized string.
+	 * @param string $key Key of the meta to translate.
+	 * @return mixed
+	 */
+	public function maybe_translate_value( $value, $key )
+	{
+	}
+
+	/**
+	 * Hack to prevent duplicating post metas.
+	 *
+	 * TODO : Spot what causes the duplicated metas and get rid of this filter
+	 *
+	 * @param bool   $check      To allow adding meta, unused.
+	 * @param int    $object_id  The ID of the object.
+	 * @param string $meta_key   The added meta key.
+	 * @return bool
+	 */
+	public function add_meta( $check, $object_id, $meta_key )
+	{
+	}
 }
 /**
  * Class PLL_Translation_Content
@@ -954,9 +1018,10 @@ class PLL_Translation_Content extends \PLL_Transform_Content
      * @since 2.8
      *
      * @param string $content post_content field of the original WP_Post.
+	 * @param bool $is_media_content Whether or not the given content comes from a media.
      * @return string
      */
-    public function translate_content($content)
+    public function translate_content($content, $is_media_content = false)
     {
     }
     /**
