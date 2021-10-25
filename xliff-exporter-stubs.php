@@ -101,25 +101,25 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      *
      * @var string
      */
-    private $content;
+    protected $content;
     /**
      * Whether the given content belongs to a media.
      *
      * @var bool
      */
-    private $is_media_content;
+    protected $is_media_content;
     /**
      * Original content parsed as a DOM tree.
      *
      * @var PLL_DOM_Document
      */
-    private $document;
+    protected $document;
     /**
      * Callback to execute on each translatable content part.
      *
      * @var callable
      */
-    private $callback;
+    protected $callback;
     /**
      * PLL_Content_Walker_Classic constructor.
      *
@@ -150,7 +150,7 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      * @param DOMNode $node A first level HTML node.
      * @return string The content after having applied the callback onto it.
      */
-    private function apply($node)
+    protected function apply($node)
     {
     }
     /**
@@ -158,12 +158,11 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      *
      * @since 3.2
      *
-     * @param DOMElement                       $node  The current node.
-     * @param PLL_Translation_Entry_Identified $entry A translation entry parsed from a translation document.
+     * @param DOMElement $node  The current node.
      *
-     * @return string
+     * @return string The attributes string, empty if none found.
      */
-    protected function make_html_tag_attributes($node, $entry)
+    protected function get_html_tag_attributes($node)
     {
     }
     /**
@@ -175,7 +174,7 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      *
      * @return mixed|string
      */
-    private function handle_image($node)
+    protected function handle_image($node)
     {
     }
     /**
@@ -187,7 +186,7 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      * @param PLL_Translation_Entry_Identified $entry A translation entry parsed from a translation document.
      * @return string A HTML formatted string.
      */
-    private function make_html_tag_from($node, $entry)
+    protected function make_html_tag_from($node, $entry)
     {
     }
     /**
@@ -198,7 +197,7 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      * @param PLL_Translation_Entry_Identified $entry A translation entry parsed from a translation document.
      * @return string The translated string.
      */
-    private function maybe_translate_entry($entry)
+    protected function maybe_translate_entry($entry)
     {
     }
     /**
@@ -210,7 +209,18 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      * @param string  $singular The text of the source.
      * @return bool|Translation_Entry The translated entry or false/true depending on the callback.
      */
-    private function create_entry_and_apply_callback($node, $singular)
+    protected function create_entry_and_apply_callback($node, $singular)
+    {
+    }
+    /**
+     * Remove the Polylang identifier from a string.
+     *
+     * @since 3.2
+     *
+     * @param string $string A string to remove the identifier from.
+     * @return string The parsed string.
+     */
+    protected function remove_pll_identifier_from_content($string)
     {
     }
     /**
@@ -223,6 +233,52 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
      * @return string The original string if not translated.
      */
     public function handle_media_shortcode($node, $shortcoded_string)
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Translations_Identified
+ *
+ * Extends a Translations object, and allow to add entries with the PLL_Translation_Entry_Identified class.
+ */
+class PLL_Translations_Identified extends \Translations
+{
+    /**
+     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
+     * See {https://github.com/WordPress/WordPress/blob/ae16932caba3a45991f517f25759d3c95a299415/wp-includes/pomo/translations.php#L24}
+     *
+     * @since 3.2
+     *
+     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
+     * @return bool true on success, false if the entry doesn't have a key
+     */
+    public function add_entry($entry)
+    {
+    }
+    /**
+     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
+     * See : {https://github.com/WordPress/WordPress/blob/ae16932caba3a45991f517f25759d3c95a299415/wp-includes/pomo/translations.php#L40}
+     *
+     * @since 3.2
+     *
+     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
+     * @return bool
+     */
+    public function add_entry_or_merge($entry)
+    {
+    }
+    /**
+     * Create a md5 hash with the source text of a given entry.
+     *
+     * @since 3.2
+     *
+     * @param Translation_Entry $entry An entry containing the source string.
+     * @return string The hash corresponding to the text.
+     */
+    protected function create_identifier($entry)
     {
     }
 }
@@ -266,21 +322,33 @@ class PLL_Translation_Post_Model
     /**
      * @var PLL_Translation_Content
      */
-    private $translate_content;
+    protected $translate_content;
+    /**
+     * @var PLL_Translation_Post_Metas
+     */
+    protected $translate_post_metas;
+    /**
+     * @var PLL_Sync_Content
+     */
+    protected $sync_content;
     /**
      * Used to query languages and translations.
      *
      * @var PLL_Model
      */
-    private $model;
+    protected $model;
+    /**
+     * @var PLL_Sync
+     */
+    protected $sync;
     /**
      * Constructor.
      *
      * @since 3.2
      *
-     * @param PLL_Model $model Used to query languages and translations.
+     * @param object $polylang Polylang object.
      */
-    public function __construct($model)
+    public function __construct(&$polylang)
     {
     }
     /**
@@ -348,6 +416,89 @@ class PLL_Translation_Post_Model
      * }
      */
     protected function get_post_translated_data($from_post)
+    {
+    }
+    /**
+     * Clone the source post giving a base for the later translated post.
+     *
+     * @since 3.2
+     *
+     * @param WP_Post $from_post The Source Post.
+     * @return WP_Post
+     */
+    protected function clone_source_post($from_post)
+    {
+    }
+}
+/**
+ * Class PLL_Translation_Metas
+ *
+ * @package polylang-pro
+ */
+/**
+ * Abstract class to manage the import of metas.
+ *
+ * @since 3.2
+ */
+abstract class PLL_Translation_Metas
+{
+    /**
+     * Meta type. Typically 'post' or 'term' and must be filled by the child class.
+     *
+     * @var string
+     */
+    protected $meta_type;
+    /**
+     * The context to translate entry.
+     *
+     * @var string
+     */
+    protected $context;
+    /**
+     * Translations set where to look for the post metas translations.
+     *
+     * @var Translations
+     */
+    protected $translations;
+    /**
+     * Translates the metas from a given object.
+     *
+     * @since 3.2
+     *
+     * @param int $src_object_id The source object to get the metas from.
+     * @param int $tr_object_id  The translated object to translate the metas from.
+     * @return void
+     */
+    public function translate($src_object_id, $tr_object_id)
+    {
+    }
+    /**
+     * Setter for translations set
+     *
+     * @since 3.2
+     *
+     * @param Translations $translations A set of translations to search the metas translations in.
+     */
+    public function set_translations($translations)
+    {
+    }
+}
+/**
+ * @package polylang-pro
+ */
+/**
+ * Class PLL_Translation_Term_Metas
+ *
+ * @since 3.2
+ *
+ * Translate term metas from a set of translation entries.
+ */
+class PLL_Translation_Term_Metas extends \PLL_Translation_Metas
+{
+    /**
+     * The PLL_Translation_Term_Metas constructor that allows to define the meta type.
+     */
+    public function __construct()
     {
     }
 }
@@ -443,180 +594,39 @@ class PLL_Translation_Walker_Blocks implements \PLL_Translation_Walker_Interface
  * @package Polylang-Pro
  */
 /**
- * Class PLL_Translations_Identified
- *
- * Decorates a Translations object, and allow to add and translate entries given a unique ID.
- */
-class PLL_Translation_Translations_Identified
-{
-    /**
-     * Reference to a Translations instance, holding Translations entries.
-     *
-     * @var Translations $translations
-     */
-    private $translations;
-    /**
-     * PLL_Import_Translations_Identified constructor.
-     *
-     * @param Translations $translations a Translations instance to decorate. If null, a new {@see Translations} will be generated instead.
-     */
-    public function __construct($translations = \null)
-    {
-    }
-    /**
-     * Delegates method calls to the inner Translations instance.
-     *
-     * @param string $name Name of the called method.
-     * @param array  $args Arguments to pass to the called method.
-     * @return mixed
-     */
-    public function __call($name, $args)
-    {
-    }
-    /**
-     * Triggers identification then add entry to its decorated Translations instance.
-     *
-     * @see PLL_Translation_Translations_Identified::maybe_identify_and_process()
-     *
-     * @param array|Translation_Entry $entry The translation entry to add. May have an id defined, but it is not mandatory.
-     * @return array|PLL_Translation_Entry_Identified
-     */
-    public function add_entry($entry)
-    {
-    }
-    /**
-     * Triggers identification then delegates to its decorated Translations instance what to do with this entry.
-     *
-     * @see PLL_Translation_Translations_Identified::maybe_identify_and_process()
-     *
-     * @param array|Translation_Entry $entry The translation entry to add or merge. May have an id defined, but it is not mandatory.
-     * @return array|PLL_Translation_Entry_Identified
-     */
-    public function add_entry_or_merge($entry)
-    {
-    }
-    /**
-     * Allow to access the decorated Translations properties.
-     *
-     * @param string $name Name of the property to access.
-     *
-     * @return mixed
-     */
-    public function __get($name)
-    {
-    }
-    /**
-     * Sets the identifier for an entry.
-     *
-     * @param array|Translation_Entry $entry An entry to set an identifier to, or an array to create such entry.
-     * @param callable                $callback A function to process on every callback.
-     *
-     * @return bool|PLL_Translation_Entry_Identified
-     */
-    private function maybe_identify_and_process($entry, $callback)
-    {
-    }
-    /**
-     * Define the id number to give to the next entry that needs one.
-     *
-     * @since 2.9
-     * @return int
-     */
-    private function next_entry_id()
-    {
-    }
-    /**
-     * Getter
-     *
-     * @return Translations|null The decorated Translations instance.
-     */
-    public function get_translation()
-    {
-    }
-}
-/**
- * @package Polylang-Pro
- */
-/**
  * Class PLL_Translation_Entry_Identified
  *
- * Use Decorator Pattern around a Translation_Entry to change the way it is identified, by giving an 'id' property.
+ * Extends Translation_Entry to allow the identification of the entry through the 'id' property.
  */
-class PLL_Translation_Entry_Identified
+class PLL_Translation_Entry_Identified extends \Translation_Entry
 {
     /**
      * Uniquely identifies the translation, whether its string has changed or not.
      *
-     * @var int|string $id
+     * @var string $id
      */
-    private $id;
+    public $id;
     /**
-     * A translation entry to decorate
+     * PLL_Translation_Entry_Identified constructor.
+     * Create the identifier automatically.
+     * See {https://developer.wordpress.org/reference/classes/translation_entry/} for details.
      *
-     * @var Translation_Entry $entry
-     */
-    public $entry;
-    /**
-     * PLL_Translation_Entry_Identified.
+     * @since 3.2
      *
-     * @param Translation_Entry|array $entry A translation entry to decorate, or an array mimicking a Translation_Entry object. Default: empty array.
+     * @param array $entry A translation entry arguments. Default: empty array.
      */
     public function __construct($entry = array())
     {
     }
     /**
-     * Verify if this property is set in the decorated instance.
+     * Create a md5 hash with the source text of a given entry.
      *
-     * @param string $name Name of the decorated instance's property to verify.
+     * @since 3.2
      *
-     * @return bool
+     * @param Translation_Entry $entry An entry containing the source string.
+     * @return void
      */
-    public function __isset($name)
-    {
-    }
-    /**
-     * Allow to access the decorated entry properties.
-     *
-     * @param string $name Name of the decorated instance's property to access.
-     *
-     * @return mixed
-     */
-    public function __get($name)
-    {
-    }
-    /**
-     * Delegates call to the decorated entry.
-     *
-     * @param string $name Name of the method to call.
-     * @param array  $args Arguments to pass to the decorated method.
-     *
-     * @return mixed
-     */
-    public function __call($name, $args = array())
-    {
-    }
-    /**
-     * Returns a unique string to identify this entry.
-     *
-     * @return string
-     */
-    public function key()
-    {
-    }
-    /**
-     * Setter
-     *
-     * @param string|int $id A unique identifier to retrieve this entry.
-     */
-    public function set_id($id)
-    {
-    }
-    /**
-     * Getter
-     *
-     * @return int
-     */
-    public function get_id()
+    protected function create_identifier($entry)
     {
     }
 }
@@ -640,6 +650,12 @@ class PLL_Translation_Term
      * @var PLL_Model
      */
     private $model;
+    /**
+     * Used to translate term meta with a set an translation entries.
+     *
+     * @var PLL_Translation_Term_Metas
+     */
+    private $translation_term_metas;
     /**
      * PLL_Translation_Term constructor.
      *
@@ -700,81 +716,16 @@ class PLL_Translation_Term
 /**
  * Class PLL_Translation_Post_Metas
  *
+ * @since 3.2
+ *
  * Translate post metas from a set of translation entries.
  */
-class PLL_Translation_Post_Metas
+class PLL_Translation_Post_Metas extends \PLL_Translation_Metas
 {
     /**
-     * Translations set where to look for the post metas translations.
-     *
-     * @var Translations
+     * The PLL_Translation_Post_Metas constructor that allows to define the meta type.
      */
-    private $translations;
-    /**
-     * Meta key for attachment metadatas.
-     *
-     * @var string
-     */
-    const ATTACHMENT_METADATA = '_wp_attachment_metadata';
-    /**
-     * Meta key for the attached files.
-     *
-     * @var string
-     */
-    const ATTACHED_FILE = '_wp_attached_file';
-    /**
-     * Meta key for image alternative texts.
-     *
-     * @var string
-     */
-    const ATTACHMENT_IMAGE_ALT = '_wp_attachment_image_alt';
-    /**
-     * Metas that are untranslatable.
-     *
-     * @var array
-     */
-    private $untranslatable_metas = array(self::ATTACHMENT_METADATA, self::ATTACHED_FILE);
-    /**
-     * Metas that should remain unique.
-     *
-     * @var array
-     */
-    private $unique_metas = array(self::ATTACHMENT_METADATA, self::ATTACHED_FILE, self::ATTACHMENT_IMAGE_ALT);
-    /**
-     * Initialize the class by creating the needed hooks.
-     */
-    public function init()
-    {
-    }
-    /**
-     * Setter for translations set
-     *
-     * @param  Translations $translations A set of translations to search the metas translations in.
-     */
-    public function set_translations($translations)
-    {
-    }
-    /**
-     * Look for translation of a meta value.
-     *
-     * @param mixed  $value A value to translate. Can only be translated if it is an unserialized string.
-     * @param string $key Key of the meta to translate.
-     * @return mixed
-     */
-    public function maybe_translate_value($value, $key)
-    {
-    }
-    /**
-     * Hack to prevent duplicating post metas.
-     *
-     * TODO : Spot what causes the duplicated metas and get rid of this filter
-     *
-     * @param bool   $check      To allow adding meta, unused.
-     * @param int    $object_id  The ID of the object.
-     * @param string $meta_key   The added meta key.
-     * @return bool
-     */
-    public function add_meta($check, $object_id, $meta_key)
+    public function __construct()
     {
     }
 }
@@ -1064,8 +1015,7 @@ class PLL_Export_Bulk_Option extends \PLL_Bulk_Translate_Option
     {
     }
     /**
-     * Sort posts ids to avoid exporting several posts of the same
-     * translation group for each given target languages.
+     * Sort post ids by their language.
      *
      * @since 3.2
      *
@@ -1074,18 +1024,19 @@ class PLL_Export_Bulk_Option extends \PLL_Bulk_Translate_Option
      *
      * @return int[] An array of posts ID to translate with target languages slugs as key.
      */
-    public function get_sorted_posts_to_export_by_language($post_ids, $target_languages)
+    public function sort_posts_by_language($post_ids, $target_languages)
     {
     }
     /**
-     * Remove extra posts from the same translation group respecting
-     * the languages registering order from the user.
+     * Check there is no ambiguity in the selected posts to export.
+     * For instance, the user cannot export two posts that are translations from each others.
      *
-     * @param int[] $post_ids An array of posts ids to export.
+     * @since 3.2
      *
-     * @return int[] The sorted array.
+     * @param int[] $post_ids An array of post ids to export.
+     * @return WP_Error|false An error if an ambiguity is found, false otherwise.
      */
-    protected function keep_one_post_per_translation_group($post_ids)
+    protected function is_ambiguous($post_ids)
     {
     }
 }
