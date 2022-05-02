@@ -567,7 +567,7 @@ class PLL_Translation_Entry_Identified
     /**
      * Returns a unique string to identify this entry.
      *
-     * @return string
+     * @return string|false
      */
     public function key()
     {
@@ -772,8 +772,8 @@ class PLL_Translation_Post_Model
      *
      * @since 3.2
      *
-     * @param  array              $entry    {@see PLL_Xliff_Export::get_next_entry()} output.
-     * @param  PLL_Language|false $language A language to translate into.
+     * @param  array        $entry    {@see PLL_Xliff_Export::get_next_entry()} output.
+     * @param  PLL_Language $language A language to translate into.
      * @return void
      */
     public function translate_post($entry, $language)
@@ -911,8 +911,8 @@ class PLL_Translation_Term
     /**
      * Translate a term.
      *
-     * @param array        	     $entry Array of an entry properties.
-     * @param PLL_Language|false $language The target language.
+     * @param array        $entry Array of an entry properties.
+     * @param PLL_Language $language The target language.
      * @return void
      */
     public function translate_term($entry, $language)
