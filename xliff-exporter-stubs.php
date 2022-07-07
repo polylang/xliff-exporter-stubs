@@ -149,16 +149,16 @@ class PLL_Translation_Term_Model
 /**
  * Class PLL_Translation_Walker_Interface
  *
- * Define interface for classes that iterate over content. Also serve as a factory for those classes.
+ * Define interface for classes that iterate over content.
  *
- * @since 3.2
+ * @since 3.3
  */
 interface PLL_Translation_Walker_Interface
 {
     /**
      * Iterates over each translatable part of a content and applies a callback function on each part.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @param callable $callback A callback function.
      * @return string The content (potentially) modified by the callback.
@@ -171,26 +171,20 @@ interface PLL_Translation_Walker_Interface
 /**
  * Class PLL_Translation_Walker_Classic
  *
- * @since 3.2
+ * @since 3.3
  *
- * Iterates over a HTML formatted string and applies transformations on level 1 HTML tags.
+ * Applies a callback over an HTML formatted string.
  */
 class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interface
 {
     /**
-     * Whether the given content belongs to a media.
+     * Original content.
      *
-     * @var bool
+     * @var string
      */
-    private $is_media_content;
+    private $content;
     /**
-     * Original content parsed as a DOM tree.
-     *
-     * @var PLL_DOM_Document
-     */
-    private $document;
-    /**
-     * Callback to execute on each translatable content part.
+     * Callback to execute on translatable content.
      *
      * @var callable
      */
@@ -198,77 +192,39 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
     /**
      * PLL_Content_Walker_Classic constructor.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @param string $content Classic editor HTML content.
-     * @param bool   $is_media_content Whether or not the walker is used for media content.
      */
-    public function __construct($content, $is_media_content = \false)
+    public function __construct($content)
     {
     }
     /**
-     * Iterate over translatable parts of a content, applies the defined callback on each such part, and then returns a transformed content.
+     * Applies the defined callback on the content, and then returns a transformed content.
      *
-     * @since 3.2
+     * @since 3.3
      *
-     * @param callable $callback A transformation to apply to each translatable content part.
+     * @param callable $callback A transformation to apply to the content, whether it is for export or import.
      * @return string
      */
     public function walk($callback)
     {
     }
     /**
-     * Parse a HTML document node and apply a callback onto translatable values.
+     * Applies a callback on a given post content, whether it is to add a translation entry or translate it.
      *
-     * @since 3.2
+     * @since 3.3
      *
-     * @param DOMElement|DOMNode $node A first level HTML node.
-     * @return string The content after having applied the callback onto it.
+     * @param string $content A post content to apply a callback onto.
+     * @return string The processed content.
      */
-    private function apply($node)
+    private function apply($content)
     {
     }
     /**
-     * Generate a string of all atributes to be inserted as an attributes list in a HTML tag.
+     * Checks if the translation entry exists and return it, otherwise return the source text.
      *
-     * @since 3.2
-     *
-     * @param DOMElement                       $node  The current node.
-     * @param PLL_Translation_Entry_Identified $entry A translation entry parsed from a translation document.
-     *
-     * @return string
-     */
-    protected function make_html_tag_attributes($node, $entry)
-    {
-    }
-    /**
-     * Handles nodes containing images for compose the returned content.
-     *
-     * @since 3.2
-     *
-     * @param DOMElement|DOMNode $node Node containing images.
-     *
-     * @return mixed|string
-     */
-    private function handle_image($node)
-    {
-    }
-    /**
-     * Creates a HTML tag from a Translation_Entry and a PHP DOMNode.
-     *
-     * @since 3.2
-     *
-     * @param DOMElement                       $node A DOM node parsed from a HTML formatted database content.
-     * @param PLL_Translation_Entry_Identified $entry A translation entry parsed from a translation document.
-     * @return string A HTML formatted string.
-     */
-    private function make_html_tag_from($node, $entry)
-    {
-    }
-    /**
-     * Check if the entry translation exists and return it, otherwise return the source text.
-     *
-     * @since 3.2
+     * @since 3.3
      *
      * @param PLL_Translation_Entry_Identified $entry A translation entry parsed from a translation document.
      * @return string The translated string.
@@ -276,28 +232,41 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
     private function maybe_translate_entry($entry)
     {
     }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Translations_Identified
+ *
+ * Extends a Translations object, and allows to add entries with the PLL_Translation_Entry_Identified class.
+ */
+class PLL_Translations_Identified extends \Translations
+{
     /**
-     * Create an entry from a given node and apply a callback function to it.
+     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
      *
-     * @since 3.2
+     * @see https://github.com/WordPress/WordPress/blob/6.0/wp-includes/pomo/translations.php#L24
      *
-     * @param DOMElement $node A DOM node parsed from a HTML formatted database content.
-     * @param string     $singular The text of the source.
-     * @return bool|PLL_Translation_Entry_Identified The translated entry or false/true depending on the callback.
+     * @since 3.3
+     *
+     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
+     * @return bool true on success, false if the entry doesn't have a key
      */
-    private function create_entry_and_apply_callback($node, $singular)
+    public function add_entry($entry)
     {
     }
     /**
-     * Handles node containing the last part of a media shortcode and maybe translate it.
+     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
      *
-     * @since 3.2
+     * @see https://github.com/WordPress/WordPress/blob/6.0/wp-includes/pomo/translations.php#L40
      *
-     * @param DOMElement $node              The current node corresponding to the string.
-     * @param string     $shortcoded_string The string to check.
-     * @return string The original string if not translated.
+     * @since 3.3
+     *
+     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
+     * @return bool
      */
-    public function handle_media_shortcode($node, $shortcoded_string)
+    public function add_entry_or_merge($entry)
     {
     }
 }
@@ -309,22 +278,19 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
  *
  * A factory to create a translation walker with a given content.
  *
- * @since 3.2
+ * @since 3.3
  */
 class PLL_Translation_Walker_Factory
 {
     /**
      * Generates the correct walker class for the content to be walked.
      *
-     * Copies condition from {@see has_blocks()} because we don't need to hit the database to get a content we already has.
-     *
-     * @since 3.2
+     * @since 3.3
      *
      * @param string $content          A content to iterate over.
-     * @param bool   $is_media_content Whether or not the walker concerns a media content.
      * @return PLL_Translation_Walker_Interface
      */
-    public static function create_from($content, $is_media_content = \false)
+    public static function create_from($content)
     {
     }
 }
@@ -608,179 +574,37 @@ class PLL_Translation_Walker_Blocks implements \PLL_Translation_Walker_Interface
  * @package Polylang-Pro
  */
 /**
- * Class PLL_Translations_Identified
- *
- * Decorates a Translations object, and allow to add and translate entries given a unique ID.
- */
-class PLL_Translation_Translations_Identified
-{
-    /**
-     * Reference to a Translations instance, holding Translations entries.
-     *
-     * @var Translations $translations
-     */
-    private $translations;
-    /**
-     * PLL_Import_Translations_Identified constructor.
-     *
-     * @param Translations $translations a Translations instance to decorate. If null, a new {@see Translations} will be generated instead.
-     */
-    public function __construct($translations = \null)
-    {
-    }
-    /**
-     * Delegates method calls to the inner Translations instance.
-     *
-     * @param string $name Name of the called method.
-     * @param array  $args Arguments to pass to the called method.
-     * @return mixed
-     */
-    public function __call($name, $args)
-    {
-    }
-    /**
-     * Triggers identification then add entry to its decorated Translations instance.
-     *
-     * @see PLL_Translation_Translations_Identified::maybe_identify_and_process()
-     *
-     * @param array|PLL_Translation_Entry_Identified $entry The translation entry to add. May have an id defined, but it is not mandatory.
-     * @return bool|PLL_Translation_Entry_Identified
-     */
-    public function add_entry($entry)
-    {
-    }
-    /**
-     * Triggers identification then delegates to its decorated Translations instance what to do with this entry.
-     *
-     * @see PLL_Translation_Translations_Identified::maybe_identify_and_process()
-     *
-     * @param array|PLL_Translation_Entry_Identified $entry The translation entry to add or merge. May have an id defined, but it is not mandatory.
-     * @return bool|PLL_Translation_Entry_Identified
-     */
-    public function add_entry_or_merge($entry)
-    {
-    }
-    /**
-     * Allow to access the decorated Translations properties.
-     *
-     * @param string $name Name of the property to access.
-     *
-     * @return mixed
-     */
-    public function __get($name)
-    {
-    }
-    /**
-     * Sets the identifier for an entry.
-     *
-     * @param array|PLL_Translation_Entry_Identified $entry An entry to set an identifier to, or an array to create such entry.
-     * @param callable                               $callback A function to process on every callback.
-     *
-     * @return bool|PLL_Translation_Entry_Identified
-     */
-    private function maybe_identify_and_process($entry, $callback)
-    {
-    }
-    /**
-     * Define the id number to give to the next entry that needs one.
-     *
-     * @since 2.9
-     * @return int
-     */
-    private function next_entry_id()
-    {
-    }
-    /**
-     * Getter
-     *
-     * @return Translations|null The decorated Translations instance.
-     */
-    public function get_translation()
-    {
-    }
-}
-/**
- * @package Polylang-Pro
- */
-/**
  * Class PLL_Translation_Entry_Identified
  *
- * Use Decorator Pattern around a Translation_Entry to change the way it is identified, by giving an 'id' property.
+ * Extends Translation_Entry to allow the identification of the entry through the 'id' property.
  */
-class PLL_Translation_Entry_Identified
+class PLL_Translation_Entry_Identified extends \Translation_Entry
 {
     /**
      * Uniquely identifies the translation, whether its string has changed or not.
      *
-     * @var int|string $id
+     * @var string $id
      */
-    private $id;
+    protected $id;
     /**
-     * A translation entry to decorate
+     * PLL_Translation_Entry_Identified constructor.
+     * Identify the translation entry automatically.
      *
-     * @var Translation_Entry $entry
-     */
-    public $entry;
-    /**
-     * PLL_Translation_Entry_Identified.
+     * @see https://developer.wordpress.org/reference/classes/translation_entry/
      *
-     * @param Translation_Entry|array $entry A translation entry to decorate, or an array mimicking a Translation_Entry object. Default: empty array.
+     * @since 3.3
+     *
+     * @param array $entry A translation entry arguments. Default: empty array.
      */
     public function __construct($entry = array())
     {
     }
     /**
-     * Verify if this property is set in the decorated instance.
+     * Returns the identifier of the entry.
      *
-     * @param string $name Name of the decorated instance's property to verify.
+     * @since 3.3
      *
-     * @return bool
-     */
-    public function __isset($name)
-    {
-    }
-    /**
-     * Allow to access the decorated entry properties.
-     *
-     * @param string $name Name of the decorated instance's property to access.
-     *
-     * @return mixed
-     */
-    public function __get($name)
-    {
-    }
-    /**
-     * Delegates call to the decorated entry.
-     *
-     * @param string $name Name of the method to call.
-     * @param array  $args Arguments to pass to the decorated method.
-     *
-     * @return mixed
-     */
-    public function __call($name, $args = array())
-    {
-    }
-    /**
-     * Returns a unique string to identify this entry.
-     *
-     * @return string|false
-     */
-    public function key()
-    {
-    }
-    /**
-     * Setter
-     *
-     * @param string|int $id A unique identifier to retrieve this entry.
-     * @return void
-     */
-    public function set_id($id)
-    {
-    }
-    /**
-     * Getter
-     *
-     * @return int|string
+     * @return string
      */
     public function get_id()
     {
@@ -853,10 +677,9 @@ class PLL_Translation_Content
      * @since 3.2
      *
      * @param string $content          The post_content field of the original WP_Post.
-     * @param bool   $is_media_content Whether or not the given content comes from a media.
      * @return string
      */
-    public function translate_content($content, $is_media_content = \false)
+    public function translate_content($content)
     {
     }
     /**
@@ -877,7 +700,7 @@ class PLL_Translation_Content
 /**
  * Class PLL_Export_Post
  *
- * @since 3.2
+ * @since 3.3
  */
 class PLL_Export_Post
 {
@@ -896,7 +719,7 @@ class PLL_Export_Post
     /**
      * PLL_Export_Post constructor.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @param PLL_Model $model A reference to the current PLL_Model.
      */
@@ -907,7 +730,7 @@ class PLL_Export_Post
      * Yield all the piece of information required for the translation
      * and add them to the export file.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @param PLL_Export_Multi_Files $export Represent export file.
      * @param int                    $post_id Post id.
@@ -918,28 +741,6 @@ class PLL_Export_Post
      * @return PLL_Export_Multi_Files The given export file with added data.
      */
     public function export($export, $post_id, $target_language)
-    {
-    }
-    /**
-     * Updates a post.
-     *
-     * @since 3.2
-     *
-     * @param array $post Post values to update (must contain an ID (int)).
-     * @return void
-     */
-    public function update_post_with_translations_ids($post)
-    {
-    }
-    /**
-     * Prevent our translations ids to be sanitized.
-     *
-     * @since 3.2
-     *
-     * @param array $allowedhtml With tag names as keys, and an array of allowed attributes as value.
-     * @return array
-     */
-    public function allow_pll_id_in_attributes($allowedhtml)
     {
     }
 }
@@ -1162,7 +963,7 @@ class PLL_Export_Bulk_Option extends \PLL_Bulk_Translate_Option
 /**
  * Abstract class to manage the export of metas.
  *
- * @since 3.2
+ * @since 3.3
  */
 abstract class PLL_Export_Metas
 {
@@ -1181,7 +982,7 @@ abstract class PLL_Export_Metas
     /**
      * Get the meta names to export.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @return string[] List of custom fields names.
      */
@@ -1189,9 +990,9 @@ abstract class PLL_Export_Metas
     {
     }
     /**
-     * Export metas translations.
+     * Export metas to translate, along their translated values if possible.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @param PLL_Export_Multi_Files $export Represent export file.
      * @param int                    $from   Id of the source object.
@@ -1201,6 +1002,29 @@ abstract class PLL_Export_Metas
     public function export($export, $from, $to = 0)
     {
     }
+    /**
+     * Maybe exports metas sub fields recursively if the given meta values is contained in the fields to export.
+     *
+     * @since 3.3
+     *
+     * @param array                  $fields_to_export  A recursive array containing nested meta sub keys to translate.
+     *     @example array(
+     *        'sub_key_to_translate_1' => 1,
+     *        'sub_key_to_translate_2' => array(
+     *             'sub_sub_key_to_translate_1' => 1,
+     *         ),
+     *      ),
+     *    )
+     * @param string                 $parent_key_string A string containing parent keys separated with pipes.
+     * @param int                    $index             Index of the current meta value. Usefull when a meta has several values.
+     * @param array                  $source_metas      The source post metas.
+     * @param array                  $tr_metas          The translated post metas.
+     * @param PLL_Export_Multi_Files $export            Represents the export file.
+     * @return bool True if the meta value has been exported, false otherwise.
+     */
+    public function maybe_export_metas_sub_fields($fields_to_export, $parent_key_string, $index, $source_metas, $tr_metas, $export)
+    {
+    }
 }
 /**
  * @package Polylang-Pro
@@ -1208,14 +1032,14 @@ abstract class PLL_Export_Metas
 /**
  * Class PLL_Export_Post_Meta
  *
- * @since 3.2
+ * @since 3.3
  */
 class PLL_Export_Post_Metas extends \PLL_Export_Metas
 {
     /**
      * Constructor.
      *
-     * @since 3.2
+     * @since 3.3
      */
     public function __construct()
     {
@@ -1223,7 +1047,7 @@ class PLL_Export_Post_Metas extends \PLL_Export_Metas
     /**
      * Get the meta names to export.
      *
-     * @since 3.2
+     * @since 3.3
      *
      * @return string[] List of custom fields names.
      */
@@ -1237,14 +1061,14 @@ class PLL_Export_Post_Metas extends \PLL_Export_Metas
 /**
  * Class PLL_Export_Term_Metas
  *
- * @since 3.2
+ * @since 3.3
  */
 class PLL_Export_Term_Metas extends \PLL_Export_Metas
 {
     /**
      * Constructor.
      *
-     * @since 3.2
+     * @since 3.3
      */
     public function __construct()
     {
