@@ -1,64 +1,112 @@
 <?php
 
 /**
- * @package Polylang-Pro
+ * Class PLL_Translation_Metas
+ *
+ * @package polylang-pro
  */
 /**
- * Class PLL_Content_Parsing_Rules_Block
+ * Abstract class to manage the import of metas.
+ *
+ * @since 3.2
+ */
+abstract class PLL_Translation_Metas
+{
+    /**
+     * Meta type. Typically 'post' or 'term' and must be filled by the child class.
+     *
+     * @var string
+     */
+    protected $meta_type;
+    /**
+     * The context to translate entry.
+     *
+     * @var string
+     */
+    protected $context;
+    /**
+     * Translations set where to look for the post metas translations.
+     *
+     * @var Translations
+     */
+    protected $translations;
+    /**
+     * Translates the metas from a given object.
+     *
+     * @since 3.2
+     *
+     * @param int $src_object_id The source object to get the metas from.
+     * @param int $tr_object_id  The translated object to translate the metas from.
+     * @return void
+     */
+    public function translate($src_object_id, $tr_object_id)
+    {
+    }
+    /**
+     * Setter for translations set
+     *
+     * @since 3.2
+     *
+     * @param Translations $translations A set of translations to search the metas translations in.
+     * @return void
+     */
+    public function set_translations($translations)
+    {
+    }
+}
+/**
+ * @package polylang-pro
+ */
+/**
+ * Class PLL_Translation_Post_Metas
  *
  * @since 3.2
  *
- * Holds the rules defining which part of a block should be "translated" (see below).
- * Translated may mean different actions, like exporting it into a translation file, or updating the database...
+ * Translate post metas from a set of translation entries.
  */
-class PLL_Translation_Parsing_Rules_Block
+class PLL_Translation_Post_Metas extends \PLL_Translation_Metas
 {
     /**
-     * Holds the rules as Xpath expression to evaluate in the blocks content.
-     * By default, holds rules for the WordPress core blocks.
-     *
-     * @var array $rules
+     * The PLL_Translation_Post_Metas constructor that allows to define the meta type.
      */
-    private $rules = array('core/paragraph' => array('//p'), 'core/heading' => array('//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]'), 'core/buttons' => array(), 'core/button' => array('//a'), 'core/image' => array('//figure/figcaption', '//figure/img/@alt'), 'core/gallery' => array('//figure/figcaption', '//figure/img/@alt'), 'core/media-text' => array('//figure/img/@alt'), 'core/list' => array('//ul/li|//ol/li'), 'core/quote' => array('//blockquote/p', '//blockquote/cite'), 'core/audio' => array('//figure/figcaption'), 'core/video' => array('//figure/figcaption'), 'core/file' => array('//div/a'), 'core/cover' => array('//div/p'), 'core/subhead' => array('//p'), 'core/verse' => array('//pre'), 'core/table' => array('//th', '//td', '//figure/figcaption'), 'core/preformatted' => array('//pre'), 'core/pullquote' => array('//blockquote/p', '//blockquote/cite'), 'core/text-columns' => array('//div[@class="wp-block-column"]'), 'core/embed' => array('//figure/figcaption'), 'core-embed/twitter' => array('//figure/figcaption'), 'core-embed/youtube' => array('//figure/figcaption'), 'core-embed/facebook' => array('//figure/figcaption'), 'core-embed/instagram' => array('//figure/figcaption'), 'core-embed/vimeo' => array('//figure/figcaption'), 'core-embed/soundcloud' => array('//figure/figcaption'), 'core-embed/spotify' => array('//figure/figcaption'), 'core-embed/flickr' => array('//figure/figcaption'), 'core-embed/animoto' => array('//figure/figcaption'), 'core-embed/collegehumor' => array('//figure/figcaption'), 'core-embed/dailymotion' => array('//figure/figcaption'), 'core-embed/funnyordie' => array('//figure/figcaption'), 'core-embed/hulu' => array('//figure/figcaption'), 'core-embed/imgur' => array('//figure/figcaption'), 'core-embed/issuu' => array('//figure/figcaption'), 'core-embed/kickstarter' => array('//figure/figcaption'), 'core-embed/meetup-com' => array('//figure/figcaption'), 'core-embed/mixcloud' => array('//figure/figcaption'), 'core-embed/photobucket' => array('//figure/figcaption'), 'core-embed/polldaddy' => array('//figure/figcaption'), 'core-embed/reddit' => array('//figure/figcaption'), 'core-embed/reverbnation' => array('//figure/figcaption'), 'core-embed/screencast' => array('//figure/figcaption'), 'core-embed/scribd' => array('//figure/figcaption'), 'core-embed/slideshare' => array('//figure/figcaption'), 'core-embed/smugmug' => array('//figure/figcaption'), 'core-embed/speaker' => array('//figure/figcaption'), 'core-embed/ted' => array('//figure/figcaption'), 'core-embed/tumblr' => array('//figure/figcaption'), 'core-embed/videopress' => array('//figure/figcaption'), 'core-embed/wordpress' => array('//figure/figcaption'), 'core-embed/wordpress-tv' => array('//figure/figcaption'));
+    public function __construct()
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Translations_Identified
+ *
+ * Extends a Translations object, and allows to add entries with the PLL_Translation_Entry_Identified class.
+ */
+class PLL_Translations_Identified extends \Translations
+{
     /**
-     * Holds the name of the block type being currently parsed.
+     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
      *
-     * @var string $block_type Similar to {@see WP_Block_Parser_Block::$blockName}.
+     * @see https://github.com/WordPress/WordPress/blob/6.0/wp-includes/pomo/translations.php#L24
+     *
+     * @since 3.3
+     *
+     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
+     * @return bool true on success, false if the entry doesn't have a key
      */
-    private $block_type;
-    /**
-     * Only keeps the rules matching a certain block type.
-     *
-     * @since 3.2
-     *
-     * @param string $block_type {@see WP_Block_Parser_Block::$blockName}.
-     * @return PLL_Translation_Parsing_Rules_Block $this This object with its $rules property updated.
-     */
-    public function filter($block_type)
+    public function add_entry($entry)
     {
     }
     /**
-     * Extracts translatable parts from the block content.
-     * Returns an empty array if the parsing rules are not defined.
+     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
      *
-     * @since 3.2
+     * @see https://github.com/WordPress/WordPress/blob/6.0/wp-includes/pomo/translations.php#L40
      *
-     * @uses DOMXPath
-     * @param string $content {@see WP_Block_Parser_Block::$innerContent}.
-     * @return string[]
-     */
-    public function parse($content)
-    {
-    }
-    /**
-     * Define if a block should be parsed as custom HTML.
+     * @since 3.3
      *
-     * @since 3.2
-     *
-     * @param array $block An array mimicking a {@see WP_Block_Parser_Block}.
+     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
      * @return bool
      */
-    public function should_parse_as_html($block)
+    public function add_entry_or_merge($entry)
     {
     }
 }
@@ -237,67 +285,6 @@ class PLL_Translation_Walker_Classic implements \PLL_Translation_Walker_Interfac
  * @package Polylang-Pro
  */
 /**
- * Class PLL_Translations_Identified
- *
- * Extends a Translations object, and allows to add entries with the PLL_Translation_Entry_Identified class.
- */
-class PLL_Translations_Identified extends \Translations
-{
-    /**
-     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
-     *
-     * @see https://github.com/WordPress/WordPress/blob/6.0/wp-includes/pomo/translations.php#L24
-     *
-     * @since 3.3
-     *
-     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
-     * @return bool true on success, false if the entry doesn't have a key
-     */
-    public function add_entry($entry)
-    {
-    }
-    /**
-     * Clone the parent method and use PLL_Translation_Entry_Identified instead of Translation_Entry.
-     *
-     * @see https://github.com/WordPress/WordPress/blob/6.0/wp-includes/pomo/translations.php#L40
-     *
-     * @since 3.3
-     *
-     * @param array|PLL_Translation_Entry_Identified $entry An entry (or an array with entry's data) to add to the set of translations entries.
-     * @return bool
-     */
-    public function add_entry_or_merge($entry)
-    {
-    }
-}
-/**
- * @package Polylang-Pro
- */
-/**
- * Class PLL_Translation_Walker_Factory
- *
- * A factory to create a translation walker with a given content.
- *
- * @since 3.3
- */
-class PLL_Translation_Walker_Factory
-{
-    /**
-     * Generates the correct walker class for the content to be walked.
-     *
-     * @since 3.3
-     *
-     * @param string $content          A content to iterate over.
-     * @return PLL_Translation_Walker_Interface
-     */
-    public static function create_from($content)
-    {
-    }
-}
-/**
- * @package Polylang-Pro
- */
-/**
  * Manages posts translations.
  *
  * @since 3.3
@@ -416,79 +403,6 @@ class PLL_Translation_Post_Model
     }
 }
 /**
- * Class PLL_Translation_Metas
- *
- * @package polylang-pro
- */
-/**
- * Abstract class to manage the import of metas.
- *
- * @since 3.2
- */
-abstract class PLL_Translation_Metas
-{
-    /**
-     * Meta type. Typically 'post' or 'term' and must be filled by the child class.
-     *
-     * @var string
-     */
-    protected $meta_type;
-    /**
-     * The context to translate entry.
-     *
-     * @var string
-     */
-    protected $context;
-    /**
-     * Translations set where to look for the post metas translations.
-     *
-     * @var Translations
-     */
-    protected $translations;
-    /**
-     * Translates the metas from a given object.
-     *
-     * @since 3.2
-     *
-     * @param int $src_object_id The source object to get the metas from.
-     * @param int $tr_object_id  The translated object to translate the metas from.
-     * @return void
-     */
-    public function translate($src_object_id, $tr_object_id)
-    {
-    }
-    /**
-     * Setter for translations set
-     *
-     * @since 3.2
-     *
-     * @param Translations $translations A set of translations to search the metas translations in.
-     * @return void
-     */
-    public function set_translations($translations)
-    {
-    }
-}
-/**
- * @package polylang-pro
- */
-/**
- * Class PLL_Translation_Term_Metas
- *
- * @since 3.2
- *
- * Translate term metas from a set of translation entries.
- */
-class PLL_Translation_Term_Metas extends \PLL_Translation_Metas
-{
-    /**
-     * The PLL_Translation_Term_Metas constructor that allows to define the meta type.
-     */
-    public function __construct()
-    {
-    }
-}
-/**
  * @package Polylang-Pro
  */
 /**
@@ -574,58 +488,61 @@ class PLL_Translation_Walker_Blocks implements \PLL_Translation_Walker_Interface
  * @package Polylang-Pro
  */
 /**
- * Class PLL_Translation_Entry_Identified
- *
- * Extends Translation_Entry to allow the identification of the entry through the 'id' property.
- */
-class PLL_Translation_Entry_Identified extends \Translation_Entry
-{
-    /**
-     * Uniquely identifies the translation, whether its string has changed or not.
-     *
-     * @var string $id
-     */
-    protected $id;
-    /**
-     * PLL_Translation_Entry_Identified constructor.
-     * Identify the translation entry automatically.
-     *
-     * @see https://developer.wordpress.org/reference/classes/translation_entry/
-     *
-     * @since 3.3
-     *
-     * @param array $entry A translation entry arguments. Default: empty array.
-     */
-    public function __construct($entry = array())
-    {
-    }
-    /**
-     * Returns the identifier of the entry.
-     *
-     * @since 3.3
-     *
-     * @return string
-     */
-    public function get_id()
-    {
-    }
-}
-/**
- * @package polylang-pro
- */
-/**
- * Class PLL_Translation_Post_Metas
+ * Class PLL_Content_Parsing_Rules_Block
  *
  * @since 3.2
  *
- * Translate post metas from a set of translation entries.
+ * Holds the rules defining which part of a block should be "translated" (see below).
+ * Translated may mean different actions, like exporting it into a translation file, or updating the database...
  */
-class PLL_Translation_Post_Metas extends \PLL_Translation_Metas
+class PLL_Translation_Parsing_Rules_Block
 {
     /**
-     * The PLL_Translation_Post_Metas constructor that allows to define the meta type.
+     * Holds the rules as Xpath expression to evaluate in the blocks content.
+     * By default, holds rules for the WordPress core blocks.
+     *
+     * @var array $rules
      */
-    public function __construct()
+    private $rules = array('core/paragraph' => array('//p'), 'core/heading' => array('//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]'), 'core/buttons' => array(), 'core/button' => array('//a'), 'core/image' => array('//figure/figcaption', '//figure/img/@alt'), 'core/gallery' => array('//figure/figcaption', '//figure/img/@alt'), 'core/media-text' => array('//figure/img/@alt'), 'core/list' => array('//ul/li|//ol/li'), 'core/quote' => array('//blockquote/p', '//blockquote/cite'), 'core/audio' => array('//figure/figcaption'), 'core/video' => array('//figure/figcaption'), 'core/file' => array('//div/a'), 'core/cover' => array('//div/p'), 'core/subhead' => array('//p'), 'core/verse' => array('//pre'), 'core/table' => array('//th', '//td', '//figure/figcaption'), 'core/preformatted' => array('//pre'), 'core/pullquote' => array('//blockquote/p', '//blockquote/cite'), 'core/text-columns' => array('//div[@class="wp-block-column"]'), 'core/embed' => array('//figure/figcaption'), 'core-embed/twitter' => array('//figure/figcaption'), 'core-embed/youtube' => array('//figure/figcaption'), 'core-embed/facebook' => array('//figure/figcaption'), 'core-embed/instagram' => array('//figure/figcaption'), 'core-embed/vimeo' => array('//figure/figcaption'), 'core-embed/soundcloud' => array('//figure/figcaption'), 'core-embed/spotify' => array('//figure/figcaption'), 'core-embed/flickr' => array('//figure/figcaption'), 'core-embed/animoto' => array('//figure/figcaption'), 'core-embed/collegehumor' => array('//figure/figcaption'), 'core-embed/dailymotion' => array('//figure/figcaption'), 'core-embed/funnyordie' => array('//figure/figcaption'), 'core-embed/hulu' => array('//figure/figcaption'), 'core-embed/imgur' => array('//figure/figcaption'), 'core-embed/issuu' => array('//figure/figcaption'), 'core-embed/kickstarter' => array('//figure/figcaption'), 'core-embed/meetup-com' => array('//figure/figcaption'), 'core-embed/mixcloud' => array('//figure/figcaption'), 'core-embed/photobucket' => array('//figure/figcaption'), 'core-embed/polldaddy' => array('//figure/figcaption'), 'core-embed/reddit' => array('//figure/figcaption'), 'core-embed/reverbnation' => array('//figure/figcaption'), 'core-embed/screencast' => array('//figure/figcaption'), 'core-embed/scribd' => array('//figure/figcaption'), 'core-embed/slideshare' => array('//figure/figcaption'), 'core-embed/smugmug' => array('//figure/figcaption'), 'core-embed/speaker' => array('//figure/figcaption'), 'core-embed/ted' => array('//figure/figcaption'), 'core-embed/tumblr' => array('//figure/figcaption'), 'core-embed/videopress' => array('//figure/figcaption'), 'core-embed/wordpress' => array('//figure/figcaption'), 'core-embed/wordpress-tv' => array('//figure/figcaption'));
+    /**
+     * Holds the name of the block type being currently parsed.
+     *
+     * @var string $block_type Similar to {@see WP_Block_Parser_Block::$blockName}.
+     */
+    private $block_type;
+    /**
+     * Only keeps the rules matching a certain block type.
+     *
+     * @since 3.2
+     *
+     * @param string $block_type {@see WP_Block_Parser_Block::$blockName}.
+     * @return PLL_Translation_Parsing_Rules_Block $this This object with its $rules property updated.
+     */
+    public function filter($block_type)
+    {
+    }
+    /**
+     * Extracts translatable parts from the block content.
+     * Returns an empty array if the parsing rules are not defined.
+     *
+     * @since 3.2
+     *
+     * @uses DOMXPath
+     * @param string $content {@see WP_Block_Parser_Block::$innerContent}.
+     * @return string[]
+     */
+    public function parse($content)
+    {
+    }
+    /**
+     * Define if a block should be parsed as custom HTML.
+     *
+     * @since 3.2
+     *
+     * @param array $block An array mimicking a {@see WP_Block_Parser_Block}.
+     * @return bool
+     */
+    public function should_parse_as_html($block)
     {
     }
 }
@@ -691,6 +608,206 @@ class PLL_Translation_Content
      * @return string
      */
     public function translate_excerpt($post_excerpt)
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Translation_Walker_Factory
+ *
+ * A factory to create a translation walker with a given content.
+ *
+ * @since 3.3
+ */
+class PLL_Translation_Walker_Factory
+{
+    /**
+     * Generates the correct walker class for the content to be walked.
+     *
+     * @since 3.3
+     *
+     * @param string $content          A content to iterate over.
+     * @return PLL_Translation_Walker_Interface
+     */
+    public static function create_from($content)
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Translation_Entry_Identified
+ *
+ * Extends Translation_Entry to allow the identification of the entry through the 'id' property.
+ */
+class PLL_Translation_Entry_Identified extends \Translation_Entry
+{
+    /**
+     * Uniquely identifies the translation, whether its string has changed or not.
+     *
+     * @var string $id
+     */
+    protected $id;
+    /**
+     * PLL_Translation_Entry_Identified constructor.
+     * Identify the translation entry automatically.
+     *
+     * @see https://developer.wordpress.org/reference/classes/translation_entry/
+     *
+     * @since 3.3
+     *
+     * @param array $entry A translation entry arguments. Default: empty array.
+     */
+    public function __construct($entry = array())
+    {
+    }
+    /**
+     * Returns the identifier of the entry.
+     *
+     * @since 3.3
+     *
+     * @return string
+     */
+    public function get_id()
+    {
+    }
+}
+/**
+ * @package polylang-pro
+ */
+/**
+ * Class PLL_Translation_Term_Metas
+ *
+ * @since 3.2
+ *
+ * Translate term metas from a set of translation entries.
+ */
+class PLL_Translation_Term_Metas extends \PLL_Translation_Metas
+{
+    /**
+     * The PLL_Translation_Term_Metas constructor that allows to define the meta type.
+     */
+    public function __construct()
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Abstract class to manage the export of metas.
+ *
+ * @since 3.3
+ */
+abstract class PLL_Export_Metas
+{
+    /**
+     * Meta type. Typically 'post' or 'term' and must be filled by the child class.
+     *
+     * @var string
+     */
+    protected $meta_type;
+    /**
+     * Import/Export meta type. {@see PLL_Import_Export::POST_META} or {@see PLL_Import_Export::POST_META} and must be filled by the child class.
+     *
+     * @var string
+     */
+    protected $import_export_meta_type;
+    /**
+     * Get the meta names to export.
+     *
+     * @since 3.3
+     *
+     * @return string[] List of custom fields names.
+     */
+    protected function get_meta_names_to_export()
+    {
+    }
+    /**
+     * Export metas to translate, along their translated values if possible.
+     *
+     * @since 3.3
+     *
+     * @param PLL_Export_Multi_Files $export Represent export file.
+     * @param int                    $from   Id of the source object.
+     * @param int                    $to     Id of the target object.
+     * @return PLL_Export_Multi_Files Export file with corresponding metas added.
+     */
+    public function export($export, $from, $to = 0)
+    {
+    }
+    /**
+     * Maybe exports metas sub fields recursively if the given meta values is contained in the fields to export.
+     *
+     * @since 3.3
+     *
+     * @param array                  $fields_to_export  A recursive array containing nested meta sub keys to translate.
+     *     @example array(
+     *        'sub_key_to_translate_1' => 1,
+     *        'sub_key_to_translate_2' => array(
+     *             'sub_sub_key_to_translate_1' => 1,
+     *         ),
+     *      ),
+     *    )
+     * @param string                 $parent_key_string A string containing parent keys separated with pipes.
+     * @param int                    $index             Index of the current meta value. Usefull when a meta has several values.
+     * @param array                  $source_metas      The source post metas.
+     * @param array                  $tr_metas          The translated post metas.
+     * @param PLL_Export_Multi_Files $export            Represents the export file.
+     * @return bool True if the meta value has been exported, false otherwise.
+     */
+    public function maybe_export_metas_sub_fields($fields_to_export, $parent_key_string, $index, $source_metas, $tr_metas, $export)
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Export_Post_Meta
+ *
+ * @since 3.3
+ */
+class PLL_Export_Post_Metas extends \PLL_Export_Metas
+{
+    /**
+     * Constructor.
+     *
+     * @since 3.3
+     */
+    public function __construct()
+    {
+    }
+    /**
+     * Get the meta names to export.
+     *
+     * @since 3.3
+     *
+     * @return string[] List of custom fields names.
+     */
+    protected function get_meta_names_to_export()
+    {
+    }
+}
+/**
+ * @package Polylang-Pro
+ */
+/**
+ * Class PLL_Export_Term_Metas
+ *
+ * @since 3.3
+ */
+class PLL_Export_Term_Metas extends \PLL_Export_Metas
+{
+    /**
+     * Constructor.
+     *
+     * @since 3.3
+     */
+    public function __construct()
     {
     }
 }
@@ -961,68 +1078,85 @@ class PLL_Export_Bulk_Option extends \PLL_Bulk_Translate_Option
  * @package Polylang-Pro
  */
 /**
- * Abstract class to manage the export of metas.
+ * A class to handle posts import.
  *
  * @since 3.3
  */
-abstract class PLL_Export_Metas
+class PLL_Import_Posts implements \PLL_Import_Object_Interface
 {
     /**
-     * Meta type. Typically 'post' or 'term' and must be filled by the child class.
+     * Handle translation of posts
+     *
+     * @var PLL_Translation_Post_Model
+     */
+    protected $translation_post_model;
+    /**
+     * The success counter.
+     *
+     * @var int
+     */
+    protected $success;
+    /**
+     * The posts status to import with.
      *
      * @var string
      */
-    protected $meta_type;
+    private $post_status;
     /**
-     * Import/Export meta type. {@see PLL_Import_Export::POST_META} or {@see PLL_Import_Export::POST_META} and must be filled by the child class.
+     * The non existing post ids for the warning.
      *
-     * @var string
+     * @var int[]
      */
-    protected $import_export_meta_type;
+    protected $non_existing_post_ids = array();
     /**
-     * Get the meta names to export.
+     * Constructor
      *
      * @since 3.3
      *
-     * @return string[] List of custom fields names.
+     * @param PLL_Translation_Post_Model $translation_post_model The PLL_Translation_Post_Model object.
      */
-    protected function get_meta_names_to_export()
+    public function __construct($translation_post_model)
     {
     }
     /**
-     * Export metas to translate, along their translated values if possible.
+     * Handles the import of posts.
      *
      * @since 3.3
      *
-     * @param PLL_Export_Multi_Files $export Represent export file.
-     * @param int                    $from   Id of the source object.
-     * @param int                    $to     Id of the target object.
-     * @return PLL_Export_Multi_Files Export file with corresponding metas added.
+     * @param array        $entry           The current entry to import.
+     * @param PLL_Language $target_language The targeted language for import.
      */
-    public function export($export, $from, $to = 0)
+    public function translate($entry, $target_language)
     {
     }
     /**
-     * Maybe exports metas sub fields recursively if the given meta values is contained in the fields to export.
+     * Retrieves the status for the imported posts in the HTTP request.
      *
      * @since 3.3
      *
-     * @param array                  $fields_to_export  A recursive array containing nested meta sub keys to translate.
-     *     @example array(
-     *        'sub_key_to_translate_1' => 1,
-     *        'sub_key_to_translate_2' => array(
-     *             'sub_sub_key_to_translate_1' => 1,
-     *         ),
-     *      ),
-     *    )
-     * @param string                 $parent_key_string A string containing parent keys separated with pipes.
-     * @param int                    $index             Index of the current meta value. Usefull when a meta has several values.
-     * @param array                  $source_metas      The source post metas.
-     * @param array                  $tr_metas          The translated post metas.
-     * @param PLL_Export_Multi_Files $export            Represents the export file.
-     * @return bool True if the meta value has been exported, false otherwise.
+     * @return string publish or draft.
      */
-    public function maybe_export_metas_sub_fields($fields_to_export, $parent_key_string, $index, $source_metas, $tr_metas, $export)
+    protected function get_post_status()
+    {
+    }
+    /**
+     * Get update notices to display.
+     *
+     * @since 3.3
+     *
+     * @return WP_Error
+     */
+    public function get_updated_notice()
+    {
+    }
+    /**
+     * Get warnings notices to display.
+     *
+     * @since 3.3
+     *
+     * @return WP_Error
+     */
+    public function get_warning_notice()
     {
     }
 }
@@ -1030,47 +1164,63 @@ abstract class PLL_Export_Metas
  * @package Polylang-Pro
  */
 /**
- * Class PLL_Export_Post_Meta
+ * A class to handle terms import.
  *
  * @since 3.3
  */
-class PLL_Export_Post_Metas extends \PLL_Export_Metas
+class PLL_Import_Terms implements \PLL_Import_Object_Interface
 {
+    /**
+     * Handle translation of terms
+     *
+     * @var PLL_Translation_Term_Model
+     */
+    private $translation_term_model;
+    /**
+     * The success counter.
+     *
+     * @var int
+     */
+    protected $success;
     /**
      * Constructor.
      *
      * @since 3.3
+     *
+     * @param PLL_Translation_Term_Model $translation_term_model The PLL_Translation_Term_Model object.
      */
-    public function __construct()
+    public function __construct($translation_term_model)
     {
     }
     /**
-     * Get the meta names to export.
+     * Handles the import of terms.
      *
      * @since 3.3
      *
-     * @return string[] List of custom fields names.
+     * @param array        $entry           The current entry to import.
+     * @param PLL_Language $target_language The targeted language for import.
      */
-    protected function get_meta_names_to_export()
+    public function translate($entry, $target_language)
     {
     }
-}
-/**
- * @package Polylang-Pro
- */
-/**
- * Class PLL_Export_Term_Metas
- *
- * @since 3.3
- */
-class PLL_Export_Term_Metas extends \PLL_Export_Metas
-{
     /**
-     * Constructor.
+     * Get update notices to display.
      *
      * @since 3.3
+     *
+     * @return WP_Error
      */
-    public function __construct()
+    public function get_updated_notice()
+    {
+    }
+    /**
+     * Get warnings notices to display.
+     *
+     * @since 3.3
+     *
+     * @return WP_Error
+     */
+    public function get_warning_notice()
     {
     }
 }
